@@ -1,21 +1,30 @@
-function setup()
+function setup(){
+    var canvas =  createCanvas(700,600);
+    canvas.parent('canvas');
+    
+    video = createCapture(VIDEO);
+    video.size(700, 600);
+    
+    poseNet = ml5.poseNet(video, modelLoaded);
+    poseNet.on('pose', gotPoses);
+    video.hide();
+    }
+function gotPoses(results)
 {
-    var canvas =  createCanvas(600,500);
-    canvas.position(270,120);
-    video=createCapture(VIDEO);
-    video.position(50, 50);
-    video.size(180, 200);
-    poseNet=ml5.poseNet(video,modelLoaded);
-    poseNet.on('pose',gotPoses);
-    cannon_one= loadImage('cannon1.png');
+  if(results.length > 0)
+  {
+
+    rightWristY = results[0].pose.rightWrist.y;
+    rightWristX = results[0].pose.rightWrist.x;
+    scoreRightWrist =  results[0].pose.keypoints[10].score;
+    console.log(scoreRightWrist);
+  }
 }
-function gotPoses(result)
-{
-    if(result.length>0)
-    wristY=result[0].pose.leftWrist.y;
-    console.log(wristY);
-}
-function modelLoaded()
-{
-    console.log("Model Loaded");
-}
+function modelLoaded() {
+    console.log('PoseNet Is Initialized');
+  }
+  function draw(){
+
+    background(0); 
+    image(video, 0, 0, 700, 600);
+  }
